@@ -28,19 +28,45 @@ import { useForm } from "react-hook-form";
 } */
 
 function ToDoList() {
-  const { register, watch } = useForm();
-  console.log(register("todo"));
-  console.log(watch());
+  const { register, handleSubmit, formState } = useForm();
+  const onValid = (data: any) => {
+    console.log(data);
+  };
+  console.log(formState.errors);
   return (
     <div>
-      <form>
-        <input {...register("Email")} placeholder="Email"></input>
-        <input {...register("firstName")} placeholder="firstName"></input>
-        <input {...register("lastName")} placeholder="lastName"></input>
-        <input {...register("userName")} placeholder="userName"></input>
-        <input {...register("password")} placeholder="password"></input>
+      <form
+        style={{ display: "flex", flexDirection: "column" }}
+        onSubmit={handleSubmit(onValid)}
+      >
         <input
-          {...register("passwordConfirmation")}
+          {...register("Email", { required: true })}
+          placeholder="Email"
+        ></input>
+        <input
+          {...register("firstName", { required: true })}
+          placeholder="firstName"
+        ></input>
+        <input
+          {...register("lastName", { required: true })}
+          placeholder="lastName"
+        ></input>
+        <input
+          {...register("userName", { required: true, minLength: 10 })}
+          placeholder="userName"
+        ></input>
+        <input
+          {...register("password", {
+            required: "Password is required",
+            minLength: { value: 5, message: "Password is too short" },
+          })}
+          placeholder="password"
+        ></input>
+        <input
+          {...register("passwordConfirmation", {
+            required: true,
+            minLength: 5,
+          })}
           placeholder="passwordConfirmation"
         ></input>
         <button>Add</button>
