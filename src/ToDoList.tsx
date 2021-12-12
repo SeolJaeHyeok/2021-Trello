@@ -27,12 +27,28 @@ import { useForm } from "react-hook-form";
   );
 } */
 
+interface IForm {
+  email: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  password: string;
+  passwordConfirmation: string;
+}
+
 function ToDoList() {
-  const { register, handleSubmit, formState } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IForm>({
+    defaultValues: {
+      email: "@naver.com",
+    },
+  });
   const onValid = (data: any) => {
     console.log(data);
   };
-  console.log(formState.errors);
   return (
     <div>
       <form
@@ -40,21 +56,45 @@ function ToDoList() {
         onSubmit={handleSubmit(onValid)}
       >
         <input
-          {...register("Email", { required: true })}
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^[A-Za-z0-9._%+-]+@naver.com$/,
+              message: "You can only use naver email",
+            },
+          })}
           placeholder="Email"
         ></input>
+        <span style={{ color: "white", fontSize: "36" }}>
+          {errors?.email?.message}
+        </span>
         <input
-          {...register("firstName", { required: true })}
+          {...register("firstName", { required: "First Name is required" })}
           placeholder="firstName"
         ></input>
+        <span style={{ color: "white", fontSize: "36" }}>
+          {errors?.firstName?.message}
+        </span>
         <input
-          {...register("lastName", { required: true })}
+          {...register("lastName", { required: "Last Name is required" })}
           placeholder="lastName"
         ></input>
+        <span style={{ color: "white", fontSize: "36" }}>
+          {errors?.lastName?.message}
+        </span>
         <input
-          {...register("userName", { required: true, minLength: 10 })}
+          {...register("userName", {
+            required: "User Name is required",
+            minLength: {
+              value: 10,
+              message: "User Name have to more than 10!!",
+            },
+          })}
           placeholder="userName"
         ></input>
+        <span style={{ color: "white", fontSize: "36" }}>
+          {errors?.userName?.message}
+        </span>
         <input
           {...register("password", {
             required: "Password is required",
@@ -62,13 +102,22 @@ function ToDoList() {
           })}
           placeholder="password"
         ></input>
+        <span style={{ color: "white", fontSize: "36" }}>
+          {errors?.password?.message}
+        </span>
         <input
           {...register("passwordConfirmation", {
             required: true,
-            minLength: 5,
+            minLength: {
+              value: 5,
+              message: "Password have to More than 5!!",
+            },
           })}
           placeholder="passwordConfirmation"
         ></input>
+        <span style={{ color: "white", fontSize: "36" }}>
+          {errors?.passwordConfirmation?.message}
+        </span>
         <button>Add</button>
       </form>
     </div>
