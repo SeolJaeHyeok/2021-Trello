@@ -41,14 +41,24 @@ function ToDoList() {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<IForm>({
     defaultValues: {
       email: "@naver.com",
     },
   });
-  const onValid = (data: any) => {
-    console.log(data);
+  const onValid = (data: IForm) => {
+    if (data.password !== data.passwordConfirmation) {
+      setError(
+        "passwordConfirmation",
+        {
+          message: "Password are not the same",
+        },
+        { shouldFocus: true }
+      );
+    }
   };
+  console.log(errors);
   return (
     <div>
       <form
@@ -69,7 +79,15 @@ function ToDoList() {
           {errors?.email?.message}
         </span>
         <input
-          {...register("firstName", { required: "First Name is required" })}
+          {...register("firstName", {
+            required: "First Name is required",
+            validate: {
+              noMilk: (value) =>
+                value.includes("milk") ? "milk is not allowed." : true,
+              noBoy: (value) =>
+                value.includes("boy") ? "boy is not allowed." : true,
+            },
+          })}
           placeholder="firstName"
         ></input>
         <span style={{ color: "white", fontSize: "36" }}>
