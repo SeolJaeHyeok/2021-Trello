@@ -1,39 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 
-/* function ToDoList() {
-  const [todo, setTodo] = useState("");
-  const onChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const {
-      currentTarget: { value },
-    } = e;
-    setTodo(value);
-  };
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(todo);
-  };
-  return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <input
-          onChange={onChange}
-          value={todo}
-          placeholder="Write to do"
-        ></input>
-        <button>Add</button>
-      </form>
-    </div>
-  );
-} */
-
 interface IForm {
-  email: string;
-  firstName: string;
-  lastName: string;
-  userName: string;
-  password: string;
-  passwordConfirmation: string;
+  toDo: string;
 }
 
 function ToDoList() {
@@ -41,102 +10,21 @@ function ToDoList() {
     register,
     handleSubmit,
     formState: { errors },
-    setError,
-  } = useForm<IForm>({
-    defaultValues: {
-      email: "@naver.com",
-    },
-  });
-  const onValid = (data: IForm) => {
-    if (data.password !== data.passwordConfirmation) {
-      setError(
-        "passwordConfirmation",
-        {
-          message: "Password are not the same",
-        },
-        { shouldFocus: true }
-      );
-    }
+    setValue,
+  } = useForm<IForm>();
+  const onVaild = (data: IForm) => {
+    console.log("Add To Do: ", data.toDo);
+    setValue("toDo", "");
   };
-  console.log(errors);
   return (
     <div>
-      <form
-        style={{ display: "flex", flexDirection: "column" }}
-        onSubmit={handleSubmit(onValid)}
-      >
+      <form onSubmit={handleSubmit(onVaild)}>
         <input
-          {...register("email", {
-            required: "Email is required",
-            pattern: {
-              value: /^[A-Za-z0-9._%+-]+@naver.com$/,
-              message: "You can only use naver email",
-            },
-          })}
-          placeholder="Email"
+          {...register("toDo", { required: "Please Write a To Do" })}
+          placeholder="Write to do"
         ></input>
-        <span style={{ color: "white", fontSize: "36" }}>
-          {errors?.email?.message}
-        </span>
-        <input
-          {...register("firstName", {
-            required: "First Name is required",
-            validate: {
-              noMilk: (value) =>
-                value.includes("milk") ? "milk is not allowed." : true,
-              noBoy: (value) =>
-                value.includes("boy") ? "boy is not allowed." : true,
-            },
-          })}
-          placeholder="firstName"
-        ></input>
-        <span style={{ color: "white", fontSize: "36" }}>
-          {errors?.firstName?.message}
-        </span>
-        <input
-          {...register("lastName", { required: "Last Name is required" })}
-          placeholder="lastName"
-        ></input>
-        <span style={{ color: "white", fontSize: "36" }}>
-          {errors?.lastName?.message}
-        </span>
-        <input
-          {...register("userName", {
-            required: "User Name is required",
-            minLength: {
-              value: 10,
-              message: "User Name have to more than 10!!",
-            },
-          })}
-          placeholder="userName"
-        ></input>
-        <span style={{ color: "white", fontSize: "36" }}>
-          {errors?.userName?.message}
-        </span>
-        <input
-          {...register("password", {
-            required: "Password is required",
-            minLength: { value: 5, message: "Password is too short" },
-          })}
-          placeholder="password"
-        ></input>
-        <span style={{ color: "white", fontSize: "36" }}>
-          {errors?.password?.message}
-        </span>
-        <input
-          {...register("passwordConfirmation", {
-            required: true,
-            minLength: {
-              value: 5,
-              message: "Password have to More than 5!!",
-            },
-          })}
-          placeholder="passwordConfirmation"
-        ></input>
-        <span style={{ color: "white", fontSize: "36" }}>
-          {errors?.passwordConfirmation?.message}
-        </span>
         <button>Add</button>
+        <span>{errors?.toDo?.message}</span>
       </form>
     </div>
   );
