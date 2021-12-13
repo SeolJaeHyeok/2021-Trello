@@ -4,11 +4,16 @@ import { IToDo, toDoState } from "../atoms";
 
 function ToDo({ text, category, id }: IToDo) {
   const setToDos = useSetRecoilState(toDoState);
-  const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const {
-      currentTarget: { name },
-    } = event;
-    console.log(name);
+  const onClick = (newCategory: IToDo["category"]) => {
+    setToDos((oldToDos) => {
+      const targetIndex = oldToDos.findIndex((toDo) => toDo.id === id);
+      const newToDo = { text, id, category: newCategory };
+      return [
+        ...oldToDos.slice(0, targetIndex),
+        newToDo,
+        ...oldToDos.slice(targetIndex + 1),
+      ];
+    });
   };
   /* 
   인자를 HTML 요소 안에서 가져오는 방법
@@ -19,19 +24,13 @@ function ToDo({ text, category, id }: IToDo) {
     <li>
       <span>{text}</span>
       {category !== "DOING" && (
-        <button name="Doing" onClick={onClick}>
-          Doing
-        </button>
+        <button onClick={() => onClick("DOING")}>Doing</button>
       )}
       {category !== "TO_DO" && (
-        <button name="TO_DO" onClick={onClick}>
-          To Do
-        </button>
+        <button onClick={() => onClick("TO_DO")}>To Do</button>
       )}
       {category !== "DONE" && (
-        <button name="DONE" onClick={onClick}>
-          Done
-        </button>
+        <button onClick={() => onClick("DONE")}>Done</button>
       )}
     </li>
   );
