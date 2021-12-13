@@ -1,14 +1,22 @@
 import { atom, selector } from "recoil";
 
+// enum안의 요소에 값을 주지 않으면 기본적으로 코드 상에서 0, 1, 2 ... 처럼 해석된다.
+// 하지만 아래와 같이 기본값을 주게 되면 코드 상에서 내가 할당한 값으로 해석된다.
+export enum Categories {
+  "TO_DO" = "TO_DO",
+  "DOING" = "DOING",
+  "DONE" = "DONE",
+}
+
 export interface IToDo {
   text: string;
   id: number;
-  category: "TO_DO" | "DOING" | "DONE";
+  category: Categories;
 }
 
-export const categoryState = atom({
+export const categoryState = atom<Categories>({
   key: "category",
-  default: "TO_DO",
+  default: Categories.TO_DO,
 });
 
 export const toDoState = atom<IToDo[]>({
