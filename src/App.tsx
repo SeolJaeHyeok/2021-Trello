@@ -24,16 +24,36 @@ const Boards = styled.div`
 
 function App() {
   const [boardItem, setBoardItem] = useRecoilState(BoardItemAtoms);
-  const onDragEnd = ({ destination, source, draggableId }: DropResult) => {
+  const onDragEnd = (dropInfo: DropResult) => {
+    const { destination, source, draggableId } = dropInfo;
+
     if (!destination) return;
-    /* setBoardItem((oldItem) => {
-      const copyItems = [...oldItem];
-      // 1) Delete Item on source.index
-      copyItems.splice(source.index, 1);
-      // 2) Put back Item on destination.index
-      copyItems.splice(destination?.index, 0, draggableId);
-      return copyItems;
-    }); */
+    if (destination?.droppableId === source.droppableId) {
+      // Same Board Movement
+      setBoardItem((allBoards) => {
+        const boardItems = [...allBoards[source.droppableId]];
+        boardItems.splice(source.index, 1);
+        boardItems.splice(destination.index, 0, draggableId);
+        return {
+          ...allBoards,
+          [source.droppableId]: boardItems,
+        };
+      });
+    }
+    if (destination?.droppableId !== source.droppableId) {
+      // Cross Board Movement
+      setBoardItem((allBoards) => {
+        const sourceBoard = [...allBoards[source.droppableId]];
+        const destinationBoard = [...allBoards[destination?.droppableId]];
+        sourceBoard.splice(source.index, 1);
+        destinationBoard.splice(destination.index, 0, draggableId);
+        return {
+          ...allBoards,
+          [source.droppableId]: sourceBoard,
+          [destination.droppableId]: destinationBoard,
+        };
+      });
+    }
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
