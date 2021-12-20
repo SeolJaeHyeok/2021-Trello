@@ -1,14 +1,19 @@
 import { atom, selector } from "recoil";
 
+export interface IBoardItem {
+  id: number;
+  text: string;
+}
+
 export interface IBoardItemAtoms {
-  [key: string]: string[];
+  [key: string]: IBoardItem[];
 }
 
 export const BoardItemAtoms = atom<IBoardItemAtoms>({
   key: "BoardItem",
   default: {
-    "To Do": ["a", "b"],
-    Doing: ["c", "d", "e"],
-    Done: ["f"],
+    "To Do": [],
+    Doing: [],
+    Done: [],
   },
 });

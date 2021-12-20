@@ -16,24 +16,26 @@ const Wrapper = styled.div`
 `;
 
 const Boards = styled.div`
-  display: grid;
-  gap: 30px;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
   width: 100%;
 `;
 
 function App() {
   const [boardItem, setBoardItem] = useRecoilState(BoardItemAtoms);
   const onDragEnd = (dropInfo: DropResult) => {
-    const { destination, source, draggableId } = dropInfo;
+    const { destination, source } = dropInfo;
 
     if (!destination) return;
     if (destination?.droppableId === source.droppableId) {
       // Same Board Movement
       setBoardItem((allBoards) => {
         const boardItems = [...allBoards[source.droppableId]];
+        const taskObj = boardItems[source.index];
         boardItems.splice(source.index, 1);
-        boardItems.splice(destination.index, 0, draggableId);
+        boardItems.splice(destination.index, 0, taskObj);
         return {
           ...allBoards,
           [source.droppableId]: boardItems,
@@ -45,8 +47,9 @@ function App() {
       setBoardItem((allBoards) => {
         const sourceBoard = [...allBoards[source.droppableId]];
         const destinationBoard = [...allBoards[destination?.droppableId]];
+        const taskObj = sourceBoard[source.index];
         sourceBoard.splice(source.index, 1);
-        destinationBoard.splice(destination.index, 0, draggableId);
+        destinationBoard.splice(destination.index, 0, taskObj);
         return {
           ...allBoards,
           [source.droppableId]: sourceBoard,

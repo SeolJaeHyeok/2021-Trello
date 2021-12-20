@@ -1,5 +1,8 @@
 import { Droppable } from "react-beautiful-dnd";
+import { useForm } from "react-hook-form";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import { BoardItemAtoms, IBoardItem } from "../atoms";
 import DraggableCard from "./DraggableCard";
 
 const BoardContainer = styled.div`
@@ -10,6 +13,7 @@ const BoardContainer = styled.div`
   min-height: 300px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 `;
 
 const Area = styled.div<IAreaProps>`
@@ -32,8 +36,15 @@ const Title = styled.h2`
   margin-bottom: 10px;
 `;
 
+const Form = styled.form`
+  width: 100%;
+  input {
+    width: 100%;
+  }
+`;
+
 interface IBoardProps {
-  boardItems: string[];
+  boardItems: IBoardItem[];
   boardId: string;
 }
 
@@ -42,10 +53,37 @@ interface IAreaProps {
   isDraggingFromThisWith: boolean;
 }
 
+interface IForm {
+  toDo: string;
+}
+
 function Board({ boardItems, boardId }: IBoardProps) {
+  const setBoardItems = useSetRecoilState(BoardItemAtoms);
+  const { register, setValue, handleSubmit } = useForm<IForm>();
+
+  const onValid = ({ toDo }: IForm) => {
+    const newItem = {
+      id: Date.now(),
+      text: toDo,
+    };
+    setBoardItems((allBoards) => {
+      return {
+        ...allBoards,
+        [boardId]: [...allBoards[boardId], newItem],
+      };
+    });
+    setValue("toDo", "");
+  };
   return (
     <BoardContainer>
       <Title>{boardId}</Title>
+      <Form onSubmit={handleSubmit(onValid)}>
+        <input
+          {...register("toDo", { required: true })}
+          type="text"
+          placeholder={`Add task on ${boardId}`}
+        ></input>
+      </Form>
       <Droppable droppableId={boardId}>
         {(provided, snapshot) => (
           <Area
@@ -55,7 +93,12 @@ function Board({ boardItems, boardId }: IBoardProps) {
             {...provided.droppableProps}
           >
             {boardItems.map((item, index) => (
-              <DraggableCard key={item} item={item} index={index} />
+              <DraggableCard
+                key={item.id}
+                itemId={item.id}
+                itemText={item.text}
+                index={index}
+              />
             ))}
             {provided.placeholder}
           </Area>
