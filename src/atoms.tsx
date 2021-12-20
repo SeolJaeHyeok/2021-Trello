@@ -1,19 +1,24 @@
 import { atom, selector } from "recoil";
 
+export const saveBoard = (item: IBoard) =>
+  localStorage.setItem("BOARD", JSON.stringify(item));
+
+export const loadBoard = (): IBoard | null => {
+  const board = localStorage.getItem("BOARD");
+  if (board) return JSON.parse(board);
+  return null;
+};
+
 export interface IBoardItem {
-  id: number;
+  id: string;
   text: string;
 }
 
-export interface IBoardItemAtoms {
+export interface IBoard {
   [key: string]: IBoardItem[];
 }
 
-export const BoardItemAtoms = atom<IBoardItemAtoms>({
-  key: "BoardItem",
-  default: {
-    "To Do": [],
-    Doing: [],
-    Done: [],
-  },
+export const BoardAtoms = atom<IBoard>({
+  key: "board",
+  default: loadBoard() ?? {},
 });
