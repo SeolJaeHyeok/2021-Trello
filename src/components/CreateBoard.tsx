@@ -37,18 +37,19 @@ const Input = styled.input`
 `;
 
 interface IBoardForm {
-  title: string;
+  boardTitle: string;
 }
 
 function CreateBoard() {
   const { register, setValue, handleSubmit } = useForm<IBoardForm>();
   const [board, setBoard] = useRecoilState(BoardAtoms);
-  const onValid = ({ title }: IBoardForm) => {
-    if (title === "") return;
-    setValue("title", "");
+  const onValid = ({ boardTitle }: IBoardForm) => {
+    // console.log(board);
+    if (boardTitle === "") return;
+    setValue("boardTitle", "");
 
-    if (Object.keys(board).indexOf(title) !== -1) return;
-    setBoard((prev) => ({ ...prev, [title + "."]: [] }));
+    if (Object.keys(board).indexOf(boardTitle) !== -1) return;
+    setBoard((prev) => ({ ...prev, [boardTitle + ""]: [] }));
   };
 
   return (
@@ -56,7 +57,7 @@ function CreateBoard() {
       <Label>Make Your Board</Label>
       <BoardForm onSubmit={handleSubmit(onValid)}>
         <Input
-          {...register("title", { required: true })}
+          {...register("boardTitle", { required: true })}
           placeholder="Make Your Own Board!"
         ></Input>
         <Button text="Add" />

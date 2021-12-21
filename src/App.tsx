@@ -13,14 +13,6 @@ const Wrapper = styled.main`
   margin-top: 50px;
 `;
 
-const Boards = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 10px;
-  width: 100%;
-`;
-
 function App() {
   const [board, setBoard] = useRecoilState(BoardAtoms);
 
@@ -29,6 +21,7 @@ function App() {
     if (!destination || !source) return;
 
     if (type === "board") {
+      // Board Movement
       setBoard((prev) => {
         const new_board = Object.entries(prev);
         const [temp] = new_board.splice(source.index, 1);
@@ -42,12 +35,15 @@ function App() {
         );
       });
     } else if (type === "card") {
+      // Card Movement
       if (source.droppableId === destination.droppableId) {
+        // Same Board Movement
         const new_arr = [...board[source.droppableId]];
         const [temp] = new_arr.splice(source.index, 1);
         new_arr.splice(destination.index, 0, temp);
         setBoard((prev) => ({ ...prev, [source.droppableId]: new_arr }));
       } else {
+        // Cross Board Movement
         const first_arr = [...board[source.droppableId]];
         const second_arr = [...board[destination.droppableId]];
         const [temp] = first_arr.splice(source.index, 1);
@@ -73,7 +69,7 @@ function App() {
           {(provided) => (
             <Wrapper ref={provided.innerRef} {...provided.droppableProps}>
               {Object.keys(board).map((item, index) => (
-                <Board key={index} title={item} index={index} />
+                <Board key={index} boardTitle={item} index={index} />
               ))}
             </Wrapper>
           )}

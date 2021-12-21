@@ -12,7 +12,7 @@ interface IForm {
 }
 
 interface IProps {
-  title: string;
+  boardTitle: string;
   index: number;
 }
 
@@ -86,21 +86,26 @@ const CancleBtn = styled.button`
   }
 `;
 
-const Board = ({ title, index }: IProps) => {
+// boardTitle: 사용자가 만든 Board의 이름
+const Board = ({ boardTitle, index }: IProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { register, handleSubmit, setValue } = useForm<IForm>();
   const [board, setBoard] = useRecoilState(BoardAtoms);
 
-  const onSubmit = handleSubmit(({ text }) => {
+  const onVaild = ({ text }: IForm) => {
     if (text === "") return;
 
-    const new_arr = [...board[title]];
+    // Card로 추가할 데이터
+    // 현재 존재하는 Board 중 이름이 boardTitle에 해당하는 배열
+    const new_arr = [...board[boardTitle]];
+    // console.log(new_arr);
     const id = Date.now().toString();
 
+    // boardTitle에 새로운 Card를 추가
     new_arr.push({ id, text });
-    setBoard((prev) => ({ ...prev, [title]: new_arr }));
+    setBoard((prev) => ({ ...prev, [boardTitle]: new_arr }));
     setValue("text", "");
-  });
+  };
 
   const MouseDown = ({ target: { nodeName, id } }: any) => {
     if (id === "root" || nodeName === "H2") setIsOpen(false);
@@ -112,18 +117,18 @@ const Board = ({ title, index }: IProps) => {
   }, []);
 
   return (
-    <Draggable draggableId={title} index={index} key={title}>
+    <Draggable draggableId={boardTitle} index={index} key={boardTitle}>
       {(magic) => (
         <Container ref={magic.innerRef} {...magic.draggableProps}>
-          <TitleText {...magic.dragHandleProps}>{title.slice(0, -1)}</TitleText>
-          <Droppable direction="vertical" droppableId={title} type="card">
+          <TitleText {...magic.dragHandleProps}>{boardTitle}</TitleText>
+          <Droppable direction="vertical" droppableId={boardTitle} type="card">
             {(p, s) => (
               <Ul
                 ref={p.innerRef}
                 {...p.droppableProps}
                 isDraggingOver={s.isDraggingOver}
               >
-                {board[title].map((data: IBoardItem, index) => (
+                {board[boardTitle].map((data: IBoardItem, index) => (
                   <Card key={index} data={data} index={index} />
                 ))}
                 <li className="placeholder">{p.placeholder}</li>
@@ -131,7 +136,7 @@ const Board = ({ title, index }: IProps) => {
             )}
           </Droppable>
           {isOpen ? (
-            <Form onSubmit={onSubmit}>
+            <Form onSubmit={handleSubmit(onVaild)}>
               <TextArea placeholder="Enter your Task" {...register("text")} />
               <div style={{ display: "flex", alignItems: "center" }}>
                 <Button text="Add" />

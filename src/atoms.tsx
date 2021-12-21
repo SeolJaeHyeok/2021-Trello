@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+import { atom } from "recoil";
 
 export const saveBoard = (item: IBoard) =>
   localStorage.setItem("BOARD", JSON.stringify(item));
