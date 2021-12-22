@@ -13,6 +13,24 @@ const Wrapper = styled.main`
   margin-top: 50px;
 `;
 
+const TrashWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 5%;
+  right: 30%;
+  transition: all 0.2s ease-in;
+  &:hover {
+    transform: scale(1.5);
+    color: white;
+  }
+`;
+
+const Trash = styled.div`
+  width: 50px;
+  height: 50px;
+`;
+
 function App() {
   const [board, setBoard] = useRecoilState(BoardAtoms);
 
@@ -20,6 +38,26 @@ function App() {
     const { destination, source, type } = dropInfo;
     if (!destination || !source) return;
 
+    // Delete Logic
+    if (destination.droppableId === "trash-card") {
+      // Delete BoardItem on Board
+      setBoard((prev) => {
+        const new_item = [...board[source.droppableId]];
+        new_item.splice(source.index, 1);
+        return { ...prev, [source.droppableId]: new_item };
+      });
+      return;
+    } else if (destination.droppableId === "trash-board") {
+      // Delete Board
+      setBoard((prev) => {
+        const new_board = { ...prev };
+        delete new_board[dropInfo.draggableId];
+        return new_board;
+      });
+      return;
+    }
+
+    // Movement Logic
     if (type === "board") {
       // Board Movement
       setBoard((prev) => {
@@ -57,6 +95,7 @@ function App() {
     }
   };
 
+  // Change UI when board changed
   useEffect(() => {
     saveBoard(board);
   }, [board]);
@@ -71,9 +110,27 @@ function App() {
               {Object.keys(board).map((item, index) => (
                 <Board key={index} boardTitle={item} index={index} />
               ))}
+              {provided.placeholder}
             </Wrapper>
           )}
         </Droppable>
+        <TrashWrapper>
+          <Droppable droppableId="trash-card" type="card">
+            {(provided) => (
+              <Trash ref={provided.innerRef} {...provided.droppableProps}>
+                {provided.placeholder}
+              </Trash>
+            )}
+          </Droppable>
+          <i className="far fa-trash-alt fa-3x" style={{ color: "white" }}></i>
+          <Droppable droppableId="trash-board" type="board">
+            {(provided) => (
+              <Trash ref={provided.innerRef} {...provided.droppableProps}>
+                {provided.placeholder}
+              </Trash>
+            )}
+          </Droppable>
+        </TrashWrapper>
       </DragDropContext>
     </>
   );
