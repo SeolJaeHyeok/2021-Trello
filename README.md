@@ -1,8 +1,8 @@
-# MyTrello
+# My Kanban Board
 
 ## Overview
 
-Trello의 Board, Card의 추가, 삭제 기능 및 Drag&Drop 기능 구현
+Board, Card의 추가, 삭제 및 Drag&Drop 기능 구현
 
 You can enjoy this App [Here](https://flamboyant-wright-29843b.netlify.app)
 
